@@ -21,6 +21,14 @@
                     @error('uri')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Status da empresa</label>
+                    <select name="is_active" class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#F27327] focus:ring-2 focus:ring-[#F27327]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
+                        <option value="1" @selected(old('is_active', '1')==='1')>Ativa</option>
+                        <option value="0" @selected(old('is_active')==='0')>Suspensa</option>
+                    </select>
+                    @error('is_active')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Idioma</label>
                     <select name="locale" class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#F27327] focus:ring-2 focus:ring-[#F27327]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
                         <option value="pt-BR" @selected(old('locale')==='pt-BR')>Português (Brasil)</option>

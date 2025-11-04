@@ -17,6 +17,14 @@ class EnsureCompanyAdmin
         /** @var \App\Models\Company|null $company */
         $company = $request->attributes->get('company');
 
+        if (! $company || ! $company->is_active) {
+            $guard->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            abort(403, 'Empresa suspensa.');
+        }
+
         if (! $guard->check()) {
             return redirect()->route('admin.login.form', ['company' => $company]);
         }
@@ -24,7 +32,7 @@ class EnsureCompanyAdmin
         /** @var User $user */
         $user = $guard->user();
 
-        if (! $company || (int) $user->company_id !== (int) $company->id || $user->role !== User::ROLE_ADMIN || ! $user->is_active) {
+        if ((int) $user->company_id !== (int) $company->id || $user->role !== User::ROLE_ADMIN || ! $user->is_active) {
             $guard->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();

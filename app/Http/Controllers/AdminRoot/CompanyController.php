@@ -41,6 +41,7 @@ class CompanyController extends Controller
         $company->name = $data['name'];
         $company->uri = Str::of($data['uri'])->lower()->slug('-');
         $company->locale = $data['locale'];
+        $company->is_active = (bool) ($data['is_active'] ?? true);
         $company->brand_color = self::normalizeColor($data['brand_color'] ?? null);
 
         if ($request->hasFile('logo')) {
@@ -85,6 +86,7 @@ class CompanyController extends Controller
         $company->name = $data['name'];
         $company->uri = Str::of($data['uri'])->lower()->slug('-');
         $company->locale = $data['locale'];
+        $company->is_active = (bool) $data['is_active'];
         $company->brand_color = self::normalizeColor($data['brand_color'] ?? $company->brand_color);
 
         if ($request->hasFile('logo')) {

@@ -13,10 +13,15 @@ class Company extends Model
     protected $fillable = [
         'name',
         'uri',
+        'is_active',
         'locale',
         'logo_path',
         'favicon_path',
         'brand_color',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function getRouteKeyName(): string

@@ -107,6 +107,7 @@
   - Rotas admin sob `/{company}/admin/*` com `scopeBindings`.
   - Rota pública `/{company}` apontando para o formulário de login customizado (usa logo, favicon e cor cadastrados).
   - CRUD da empresa (views + requests) validando a URI e exibindo prévias das URLs.
+  - Flag `is_active` em empresas e usuários permitindo suspender/reactivar acessos pelo painel Root.
   - E-mails/notificações e dashboard root atualizados para usar `route()` com a URI apropriada.
 - **Notas:** Preparado para futura evolução com domínios dedicados, mantendo slug obrigatório durante o MVP.
 

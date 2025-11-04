@@ -29,6 +29,10 @@ class ResolveCompanyFromUri
             $company = $companyParam;
         }
 
+        if (! $company->is_active) {
+            abort(403, 'Empresa suspensa.');
+        }
+
         $request->attributes->set('company', $company);
         View::share('company', $company);
 

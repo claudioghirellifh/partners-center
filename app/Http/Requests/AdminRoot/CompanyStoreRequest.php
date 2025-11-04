@@ -20,6 +20,7 @@ class CompanyStoreRequest extends FormRequest
             'name' => ['required', 'string', 'min:3', 'max:120'],
             'uri' => ['required', 'string', 'max:60', 'regex:'.$uriRegex, 'unique:companies,uri'],
             'locale' => ['required', Rule::in(['pt-BR', 'en', 'es-AR'])],
+            'is_active' => ['required', 'boolean'],
             'brand_color' => ['nullable', 'regex:/^#?[0-9A-Fa-f]{6}$/'],
 
             // Logo obrigatório (até 1MB, qualquer extensão)

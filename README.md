@@ -105,6 +105,7 @@ Cada empresa personaliza URI, identidade visual (logo, favicon, duas cores princ
 - Acesse: `Painel Root` → menu `Empresas`.
 - Criar empresa exige:
   - Nome, URI (slug sem espaços, ex.: `catus` → `http://local.partners/catus`), idioma (`pt-BR`, `en`, `es-AR`).
+  - Status (Ativa ou Suspensa). Empresas suspensas bloqueiam o login de todos os usuários vinculados até nova ativação.
   - Logo (qualquer extensão, até 1MB) e favicon (`.ico`, `.png` ou `.svg`).
   - Admin inicial (nome e e-mail). Ele recebe e-mail com instruções de acesso contendo login e senha temporária.
 - Editar empresa permite reenvio de logo/favicon e mostra prévias das imagens atuais, além de links rápidos da URI pública e do login admin.
