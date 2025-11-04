@@ -111,6 +111,7 @@ Cada empresa personaliza URI, identidade visual (logo, favicon, duas cores princ
 - Editar empresa permite reenvio de logo/favicon e mostra prévias das imagens atuais, além de links rápidos da URI pública e do login admin.
 - O login dos parceiros fica disponível diretamente em `http://local.partners/{uri}` (com formulário de acesso estilizado com logo/cor da empresa).
 - Menu `Planos`: crie e edite planos SaaS com preço mensal, anual e desconto percentual aplicado no ciclo anual. Esses valores serão usados em ofertas futuras.
+- Menu `Integrações` → Iugu: informe o API token para futuras cobranças automáticas.
 
 ---
 

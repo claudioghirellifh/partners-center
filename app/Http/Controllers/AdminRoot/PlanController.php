@@ -46,6 +46,11 @@ class PlanController extends Controller
 
     public function destroy(Plan $plan): RedirectResponse
     {
+        if ($plan->projects()->exists()) {
+            return redirect()->route('adminroot.plans.index')
+                ->withErrors(['plan' => 'Este plano está associado a um ou mais projetos e não pode ser removido.']);
+        }
+
         $plan->delete();
 
         return redirect()->route('adminroot.plans.index')

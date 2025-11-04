@@ -146,6 +146,14 @@
   - Views `resources/views/admin/projects/*` e item de menu “Projetos” no painel admin.
 - **Notas:** ciclo é literal (monthly/annual); futuras regras de faturamento podem usar esses dados. Projetos são isolados por empresa.
 
+### Sessão 013 (Integração Iugu — credenciais)
+- **Objetivo:** armazenar o API token da Iugu para uso futuro em cobranças.
+- **Entrega:**
+  - Tabela `settings` e repositório `SettingRepository` para persistir pares grupo/chave.
+  - Tela `adminroot/integrations` com formulário para salvar o token Iugu.
+  - Menu “Integrações” no painel Root.
+- **Notas:** valor salvo como texto simples; etapas futuras incluirão validação via API e funções de billing.
+
 ### Observações operacionais recentes
 - Rodar migrações novas: `php artisan migrate` (campo `uri` em companies, brand_color, FK cascade users→companies).
 - Mailtrap no `.env` para testes de e-mail (SMTP). Evitar commitar credenciais.

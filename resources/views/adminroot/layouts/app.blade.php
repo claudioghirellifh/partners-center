@@ -69,6 +69,24 @@
                             </a>
                         </li>
                         <li>
+                            <details class="group" {{ request()->routeIs('adminroot.integrations.*') ? 'open' : '' }}>
+                                <summary class="flex cursor-pointer items-center gap-3 rounded-lg px-4 py-2 font-medium text-slate-600 transition hover:bg-slate-200/70 dark:text-slate-300 dark:hover:bg-slate-800/60">
+                                    <span class="inline-flex h-2 w-2 rounded-full {{ request()->routeIs('adminroot.integrations.*') ? 'bg-[#F27327]' : 'bg-slate-400 dark:bg-slate-600' }}"></span>
+                                    Integrações
+                                </summary>
+                                <ul class="mt-2 space-y-1 px-6 text-sm">
+                                    <li>
+                                        <a
+                                            href="{{ route('adminroot.integrations.index') }}"
+                                            class="flex items-center gap-2 rounded-lg px-3 py-2 text-slate-600 transition hover:bg-slate-200/70 dark:text-slate-300 dark:hover:bg-slate-800/60 {{ request()->routeIs('adminroot.integrations.index') ? 'bg-slate-200 text-slate-900 dark:bg-slate-800/80 dark:text-white' : '' }}"
+                                        >
+                                            Iugu
+                                        </a>
+                                    </li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li>
                             <button
                                 type="button"
                                 class="flex w-full items-center gap-3 rounded-lg px-4 py-2 text-left font-medium text-slate-400 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"

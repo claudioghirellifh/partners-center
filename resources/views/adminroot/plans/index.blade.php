@@ -14,6 +14,12 @@
         </div>
     @endif
 
+    @if ($errors->has('plan'))
+        <div class="mb-6 rounded-lg border border-red-300/60 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-600/50 dark:bg-red-900/20 dark:text-red-200">
+            {{ $errors->first('plan') }}
+        </div>
+    @endif
+
     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white/80 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
         <table class="min-w-full text-left text-sm text-slate-700 dark:text-slate-300">
             <thead class="bg-slate-100/80 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-900/40 dark:text-slate-400">

@@ -12,6 +12,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(\App\Services\Impersonation\ImpersonationManager::class);
+        $this->app->singleton(\App\Repositories\SettingRepository::class);
     }
 
     /**
