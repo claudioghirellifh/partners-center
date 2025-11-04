@@ -62,7 +62,8 @@ class AuthController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-        $request->session()->invalidate();
+
+        $request->session()->regenerate();
         $request->session()->regenerateToken();
 
         /** @var \App\Models\Company|null $company */

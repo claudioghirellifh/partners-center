@@ -14,7 +14,12 @@
     <body style="margin:0; padding:24px; font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, 'Apple Color Emoji', 'Segoe UI Emoji'; color:#0f172a;">
         <div style="max-width:640px; margin:0 auto;">
             <div style="margin-bottom:16px;">
-                <img src="{{ asset('brand/logo-light.png') }}" alt="{{ config('app.name') }}" style="height:40px; width:auto; display:block;" />
+                @php
+                    $logoUrl = $company->logo_path
+                        ? asset('storage/'.ltrim($company->logo_path, '/'))
+                        : asset('brand/logo-light.png');
+                @endphp
+                <img src="{{ $logoUrl }}" alt="{{ $company->logo_path ? $company->name : config('app.name') }}" style="max-height:60px; height:auto; width:auto; display:block;" />
             </div>
             <h1 style="margin:0 0 12px 0; font-size:22px;">Bem-vindo(a) como Admin — {{ $company->name }}</h1>
             <p style="margin:0 0 12px 0; color:#334155;">Você foi configurado(a) como administrador(a) da empresa <strong>{{ $company->name }}</strong>.</p>

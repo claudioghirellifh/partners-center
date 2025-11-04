@@ -111,6 +111,16 @@
   - E-mails/notificações e dashboard root atualizados para usar `route()` com a URI apropriada.
 - **Notas:** Preparado para futura evolução com domínios dedicados, mantendo slug obrigatório durante o MVP.
 
+### Sessão 009 (Admin da empresa — gestão de admins)
+- **Objetivo:** permitir que administradores de uma empresa convidem e gerenciem outros admins com branding próprio.
+- **Entrega:**
+  - Rotas `/{company}/admin/admins/*` com controlador dedicado (`Admin\AdminUserController`).
+  - Requests específicos (`Admin\AdminUserStoreRequest` / `AdminUserUpdateRequest`) garantindo unicidade de e-mail e controle de status.
+  - Views no painel admin (`resources/views/admin/admins/*`) para listar, criar e editar, incluindo suspensão/reativação com proteção para não auto-suspender.
+  - E-mails de boas-vindas reutilizam `AdminWelcomeMail`, aplicando logo/cor da empresa nos convites.
+  - Navegação do painel admin atualizada com o item “Administradores”.
+- **Notas:** usuários suspensos (ou empresas suspensas) são bloqueados pelo middleware `ResolveCompanyFromUri`/`EnsureCompanyAdmin`.
+
 ### Observações operacionais recentes
 - Rodar migrações novas: `php artisan migrate` (campo `uri` em companies, brand_color, FK cascade users→companies).
 - Mailtrap no `.env` para testes de e-mail (SMTP). Evitar commitar credenciais.

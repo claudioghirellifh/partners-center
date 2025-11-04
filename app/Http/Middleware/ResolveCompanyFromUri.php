@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Company;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -30,6 +31,10 @@ class ResolveCompanyFromUri
         }
 
         if (! $company->is_active) {
+            Auth::guard('web')->logout();
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
+
             abort(403, 'Empresa suspensa.');
         }
 

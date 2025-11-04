@@ -113,6 +113,15 @@ Cada empresa personaliza URI, identidade visual (logo, favicon, duas cores princ
 
 ---
 
+## Painel Admin (empresa)
+
+- Rota: `http://local.partners/{uri}/admin`. Cada empresa acessa com seus próprios administradores.
+- Visão geral com indicadores iniciais e acesso rápido às ações.
+- Gestão de administradores (`/{uri}/admin/admins`): criar novos acessos, suspender/reativar e atualizar dados. Convites enviam e-mail com logo, favicon e cor da empresa.
+- Usuários suspensos (ou empresas suspensas) não conseguem autenticar até nova ativação.
+
+---
+
 ## Estrutura multiempresa e idiomas
 
 - Cada empresa define uma URI dedicada (ex.: `http://local.partners/catus`).

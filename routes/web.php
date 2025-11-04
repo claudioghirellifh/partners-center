@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminRoot\DashboardController;
 use App\Http\Controllers\AdminRoot\CompanyController;
 use App\Http\Controllers\Admin\AuthController as CompanyAuthController;
 use App\Http\Controllers\Admin\DashboardController as CompanyDashboardController;
+use App\Http\Controllers\Admin\AdminUserController as CompanyAdminUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminRoot\UserController;
 
@@ -51,6 +52,10 @@ Route::prefix('{company:uri}')
                 Route::middleware('auth.company')->group(function (): void {
                     Route::get('/dashboard', CompanyDashboardController::class)->name('dashboard');
                     Route::post('/logout', [CompanyAuthController::class, 'destroy'])->name('logout');
+
+                    Route::resource('admins', CompanyAdminUserController::class)
+                        ->except(['show', 'destroy'])
+                        ->parameters(['admins' => 'adminUser']);
                 });
             });
     });
