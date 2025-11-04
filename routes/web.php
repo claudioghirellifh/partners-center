@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminRoot\PlanController;
 use App\Http\Controllers\Admin\AuthController as CompanyAuthController;
 use App\Http\Controllers\Admin\DashboardController as CompanyDashboardController;
 use App\Http\Controllers\Admin\AdminUserController as CompanyAdminUserController;
+use App\Http\Controllers\Admin\ProjectController as CompanyProjectController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminRoot\UserController;
 
@@ -64,6 +65,10 @@ Route::prefix('{company:uri}')
                     Route::resource('admins', CompanyAdminUserController::class)
                         ->except(['show', 'destroy'])
                         ->parameters(['admins' => 'adminUser']);
+
+                    Route::resource('projects', CompanyProjectController::class)
+                        ->except(['show'])
+                        ->parameters(['projects' => 'project']);
                 });
             });
     });

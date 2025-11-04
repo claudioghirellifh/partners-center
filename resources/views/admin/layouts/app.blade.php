@@ -44,6 +44,12 @@
                                 Administradores
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.projects.index', ['company' => $company]) }}" class="flex items-center gap-3 rounded-lg px-4 py-2 font-medium text-slate-600 transition hover:bg-slate-200/70 dark:text-slate-300 dark:hover:bg-slate-800/60 {{ request()->routeIs('admin.projects.*') ? 'bg-slate-200 text-slate-900 dark:bg-slate-800/80 dark:text-white' : ''}}">
+                                <span class="inline-flex h-2 w-2 rounded-full {{ request()->routeIs('admin.projects.*') ? 'bg-[var(--brand)]' : 'bg-slate-400 dark:bg-slate-600' }}"></span>
+                                Projetos
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </aside>

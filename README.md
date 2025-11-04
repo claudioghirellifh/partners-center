@@ -122,6 +122,7 @@ Cada empresa personaliza URI, identidade visual (logo, favicon, duas cores princ
 - Usuários suspensos (ou empresas suspensas) não conseguem autenticar até nova ativação.
 - Root pode acionar o modo “Entrar como empresa” a partir do painel `adminroot`, navegando diretamente pelo ambiente da companhia (banner de aviso permite retornar ao painel Root).
 - Planos configurados no painel Root servem como catálogo-base de valores (mensal e anual com desconto) para comercialização.
+- Módulo `/{uri}/admin/projects`: cadastrar clientes/projetos vinculados a um plano específico, escolhendo ciclo mensal ou anual.
 
 ---
 

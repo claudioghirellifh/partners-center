@@ -138,6 +138,14 @@
   - Views no painel Root (`resources/views/adminroot/plans/*`) e item de menu “Planos”.
 - **Notas:** desconto anual é opcional (0–100%). Esses valores servirão para futuras ofertas/comercialização.
 
+### Sessão 012 (Projetos / Clientes por empresa)
+- **Objetivo:** permitir que cada empresa registre seus clientes/projetos vinculados aos planos existentes.
+- **Entrega:**
+  - Tabela `projects` (company_id, plan_id, nome, ciclo mensal/anual, início e notas).
+  - CRUD (`Admin\ProjectController`) em `/{company}/admin/projects`, com validação e paginação.
+  - Views `resources/views/admin/projects/*` e item de menu “Projetos” no painel admin.
+- **Notas:** ciclo é literal (monthly/annual); futuras regras de faturamento podem usar esses dados. Projetos são isolados por empresa.
+
 ### Observações operacionais recentes
 - Rodar migrações novas: `php artisan migrate` (campo `uri` em companies, brand_color, FK cascade users→companies).
 - Mailtrap no `.env` para testes de e-mail (SMTP). Evitar commitar credenciais.
