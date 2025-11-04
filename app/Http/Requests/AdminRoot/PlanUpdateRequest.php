@@ -17,8 +17,29 @@ class PlanUpdateRequest extends FormRequest
             'name' => ['required', 'string', 'max:120'],
             'monthly_price' => ['required', 'numeric', 'min:0'],
             'annual_price' => ['required', 'numeric', 'min:0'],
-            'annual_discount_percentage' => ['nullable', 'integer', 'between:0,100'],
             'description' => ['nullable', 'string'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'monthly_price' => $this->normalizePrice($this->input('monthly_price')),
+            'annual_price' => $this->normalizePrice($this->input('annual_price')),
+        ]);
+    }
+
+    protected function normalizePrice($value): float
+    {
+        if ($value === null || $value === '') {
+            return 0.0;
+        }
+
+        if (is_string($value)) {
+            $value = str_replace(['.', ' '], '', $value);
+            $value = str_replace(',', '.', $value);
+        }
+
+        return (float) $value;
     }
 }

@@ -110,8 +110,9 @@ Cada empresa personaliza URI, identidade visual (logo, favicon, duas cores princ
   - Admin inicial (nome e e-mail). Ele recebe e-mail com instruções de acesso contendo login e senha temporária.
 - Editar empresa permite reenvio de logo/favicon e mostra prévias das imagens atuais, além de links rápidos da URI pública e do login admin.
 - O login dos parceiros fica disponível diretamente em `http://local.partners/{uri}` (com formulário de acesso estilizado com logo/cor da empresa).
-- Menu `Planos`: crie e edite planos SaaS com preço mensal, anual e desconto percentual aplicado no ciclo anual. Esses valores serão usados em ofertas futuras.
+- Menu `Planos`: crie e edite planos SaaS com preço mensal e anual. Esses valores serão usados em ofertas futuras.
 - Menu `Integrações` → Iugu: informe o API token para futuras cobranças automáticas.
+- Botão “Sincronizar planos” importa planos existentes na Iugu para o catálogo local (necessita o token configurado).
 
 ---
 
@@ -122,7 +123,7 @@ Cada empresa personaliza URI, identidade visual (logo, favicon, duas cores princ
 - Gestão de administradores (`/{uri}/admin/admins`): criar novos acessos, suspender/reativar e atualizar dados. Convites enviam e-mail com logo, favicon e cor da empresa.
 - Usuários suspensos (ou empresas suspensas) não conseguem autenticar até nova ativação.
 - Root pode acionar o modo “Entrar como empresa” a partir do painel `adminroot`, navegando diretamente pelo ambiente da companhia (banner de aviso permite retornar ao painel Root).
-- Planos configurados no painel Root servem como catálogo-base de valores (mensal e anual com desconto) para comercialização.
+- Planos configurados no painel Root servem como catálogo-base de valores (mensal e anual) para comercialização.
 - Módulo `/{uri}/admin/projects`: cadastrar clientes/projetos vinculados a um plano específico, escolhendo ciclo mensal ou anual.
 
 ---

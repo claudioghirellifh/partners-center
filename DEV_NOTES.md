@@ -133,10 +133,10 @@
 ### Sessão 011 (Planos SaaS)
 - **Objetivo:** centralizar a gestão de planos (mensal/anual) no painel Root.
 - **Entrega:**
-  - Tabela `plans` com campos de preço mensal, anual, desconto percentual e descrição.
+  - Tabela `plans` com campos de preço mensal, anual e descrição.
   - CRUD completo (`AdminRoot\PlanController`) com validações dedicadas e paginação.
   - Views no painel Root (`resources/views/adminroot/plans/*`) e item de menu “Planos”.
-- **Notas:** desconto anual é opcional (0–100%). Esses valores servirão para futuras ofertas/comercialização.
+- **Notas:** os valores mensal/anual servem de catálogo base para comercialização.
 
 ### Sessão 012 (Projetos / Clientes por empresa)
 - **Objetivo:** permitir que cada empresa registre seus clientes/projetos vinculados aos planos existentes.
@@ -153,6 +153,14 @@
   - Tela `adminroot/integrations` com formulário para salvar o token Iugu.
   - Menu “Integrações” no painel Root.
 - **Notas:** valor salvo como texto simples; etapas futuras incluirão validação via API e funções de billing.
+
+### Sessão 014 (Sincronização de planos com Iugu)
+- **Objetivo:** manter o catálogo local em sincronia com os planos da Iugu e vice-versa.
+- **Entrega:**
+  - Serviço `IuguClient` encapsulando chamadas REST (listar/criar/atualizar/deletar planos).
+  - Botão “Sincronizar planos” em `adminroot/plans` que importa os planos existentes na Iugu.
+  - Criação/edição/remoção de planos passa a refletir na Iugu (identificador salvo em `plans.iugu_identifier`).
+- **Notas:** requisições falham graciosamente quando o token não está configurado; `price_cents` usa o preço mensal e anual é derivado localmente.
 
 ### Observações operacionais recentes
 - Rodar migrações novas: `php artisan migrate` (campo `uri` em companies, brand_color, FK cascade users→companies).

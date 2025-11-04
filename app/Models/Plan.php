@@ -14,14 +14,13 @@ class Plan extends Model
         'name',
         'monthly_price',
         'annual_price',
-        'annual_discount_percentage',
         'description',
+        'plan_id',
     ];
 
     protected $casts = [
         'monthly_price' => 'float',
         'annual_price' => 'float',
-        'annual_discount_percentage' => 'integer',
     ];
 
     public function projects(): HasMany

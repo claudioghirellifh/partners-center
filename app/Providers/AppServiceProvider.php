@@ -13,6 +13,12 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(\App\Services\Impersonation\ImpersonationManager::class);
         $this->app->singleton(\App\Repositories\SettingRepository::class);
+        $this->app->bind(\App\Services\Iugu\IuguClient::class, function ($app) {
+            $token = $app->make(\App\Repositories\SettingRepository::class)
+                ->get('integrations.iugu', 'api_token');
+
+            return new \App\Services\Iugu\IuguClient($token);
+        });
     }
 
     /**

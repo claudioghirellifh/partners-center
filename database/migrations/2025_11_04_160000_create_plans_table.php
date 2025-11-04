@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->string('name');
             $table->decimal('monthly_price', 10, 2);
             $table->decimal('annual_price', 10, 2);
-            $table->unsignedTinyInteger('annual_discount_percentage')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

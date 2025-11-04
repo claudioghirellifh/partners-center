@@ -32,6 +32,7 @@ Route::prefix($adminRootPrefix)
             Route::resource('companies', CompanyController::class)->except(['show']);
             Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
             Route::resource('plans', PlanController::class)->except(['show']);
+            Route::post('/plans/sync-iugu', [PlanController::class, 'syncFromIugu'])->name('plans.sync');
 
             Route::get('/integrations', [IntegrationController::class, 'index'])->name('integrations.index');
             Route::post('/integrations/iugu', [IntegrationController::class, 'updateIugu'])->name('integrations.iugu.update');
