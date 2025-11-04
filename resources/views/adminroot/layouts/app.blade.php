@@ -60,6 +60,15 @@
                             </a>
                         </li>
                         <li>
+                            <a
+                                href="{{ route('adminroot.plans.index') }}"
+                                class="flex items-center gap-3 rounded-lg px-4 py-2 font-medium text-slate-600 transition hover:bg-slate-200/70 dark:text-slate-300 dark:hover:bg-slate-800/60 {{ request()->routeIs('adminroot.plans.*') ? 'bg-slate-200 text-slate-900 dark:bg-slate-800/80 dark:text-white' : '' }}"
+                            >
+                                <span class="inline-flex h-2 w-2 rounded-full {{ request()->routeIs('adminroot.plans.*') ? 'bg-[#F27327]' : 'bg-slate-400 dark:bg-slate-600' }}"></span>
+                                Planos
+                            </a>
+                        </li>
+                        <li>
                             <button
                                 type="button"
                                 class="flex w-full items-center gap-3 rounded-lg px-4 py-2 text-left font-medium text-slate-400 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"

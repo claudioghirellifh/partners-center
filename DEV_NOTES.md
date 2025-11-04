@@ -130,6 +130,14 @@
   - Rotas `/adminroot/companies/{company}/impersonate` e `/adminroot/impersonation/leave` protegidas por `auth.root`.
 - **Notas:** sessão root permanece válida; apenas o guard `web` é alternado. Empresas suspensas ou sem admins ativos geram mensagem de erro.
 
+### Sessão 011 (Planos SaaS)
+- **Objetivo:** centralizar a gestão de planos (mensal/anual) no painel Root.
+- **Entrega:**
+  - Tabela `plans` com campos de preço mensal, anual, desconto percentual e descrição.
+  - CRUD completo (`AdminRoot\PlanController`) com validações dedicadas e paginação.
+  - Views no painel Root (`resources/views/adminroot/plans/*`) e item de menu “Planos”.
+- **Notas:** desconto anual é opcional (0–100%). Esses valores servirão para futuras ofertas/comercialização.
+
 ### Observações operacionais recentes
 - Rodar migrações novas: `php artisan migrate` (campo `uri` em companies, brand_color, FK cascade users→companies).
 - Mailtrap no `.env` para testes de e-mail (SMTP). Evitar commitar credenciais.
