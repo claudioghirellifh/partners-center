@@ -119,6 +119,7 @@ Cada empresa personaliza URI, identidade visual (logo, favicon, duas cores princ
 - Visão geral com indicadores iniciais e acesso rápido às ações.
 - Gestão de administradores (`/{uri}/admin/admins`): criar novos acessos, suspender/reativar e atualizar dados. Convites enviam e-mail com logo, favicon e cor da empresa.
 - Usuários suspensos (ou empresas suspensas) não conseguem autenticar até nova ativação.
+- Root pode acionar o modo “Entrar como empresa” a partir do painel `adminroot`, navegando diretamente pelo ambiente da companhia (banner de aviso permite retornar ao painel Root).
 
 ---
 

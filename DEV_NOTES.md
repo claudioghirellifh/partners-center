@@ -121,6 +121,15 @@
   - Navegação do painel admin atualizada com o item “Administradores”.
 - **Notas:** usuários suspensos (ou empresas suspensas) são bloqueados pelo middleware `ResolveCompanyFromUri`/`EnsureCompanyAdmin`.
 
+### Sessão 010 (Impersonation Root → Empresa)
+- **Objetivo:** permitir que o Root entre rapidamente no painel de uma empresa para suporte/diagnóstico.
+- **Entrega:**
+  - Serviço `ImpersonationManager` e tabela `company_impersonations` para registrar quem iniciou o modo.
+  - Botão “Entrar como” no `adminroot.companies.index` que autentica um admin ativo da empresa e redireciona para `/{uri}/admin`.
+  - Banner persistente no layout do painel admin avisando o modo, com ação de “Voltar ao painel Root”.
+  - Rotas `/adminroot/companies/{company}/impersonate` e `/adminroot/impersonation/leave` protegidas por `auth.root`.
+- **Notas:** sessão root permanece válida; apenas o guard `web` é alternado. Empresas suspensas ou sem admins ativos geram mensagem de erro.
+
 ### Observações operacionais recentes
 - Rodar migrações novas: `php artisan migrate` (campo `uri` em companies, brand_color, FK cascade users→companies).
 - Mailtrap no `.env` para testes de e-mail (SMTP). Evitar commitar credenciais.

@@ -37,6 +37,6 @@ class Company extends Model
 
     public function adminUsers(): HasMany
     {
-        return $this->users()->where('role', User::ROLE_ADMIN);
+        return $this->hasMany(User::class)->where('role', User::ROLE_ADMIN);
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminRoot\AuthController;
 use App\Http\Controllers\AdminRoot\DashboardController;
 use App\Http\Controllers\AdminRoot\CompanyController;
+use App\Http\Controllers\AdminRoot\ImpersonationController;
 use App\Http\Controllers\Admin\AuthController as CompanyAuthController;
 use App\Http\Controllers\Admin\DashboardController as CompanyDashboardController;
 use App\Http\Controllers\Admin\AdminUserController as CompanyAdminUserController;
@@ -27,6 +28,11 @@ Route::prefix($adminRootPrefix)
 
             Route::resource('companies', CompanyController::class)->except(['show']);
             Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+            Route::post('/companies/{company}/impersonate', [ImpersonationController::class, 'store'])
+                ->name('companies.impersonate');
+            Route::post('/impersonation/leave', [ImpersonationController::class, 'destroy'])
+                ->name('impersonation.leave');
         });
     });
 

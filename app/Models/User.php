@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Notifications\ResetPassword as DefaultResetPassword;
@@ -78,5 +79,10 @@ class User extends Authenticatable
         }
 
         $this->notify(new DefaultResetPassword($token));
+    }
+
+    public function impersonations(): HasMany
+    {
+        return $this->hasMany(CompanyImpersonation::class, 'root_user_id');
     }
 }

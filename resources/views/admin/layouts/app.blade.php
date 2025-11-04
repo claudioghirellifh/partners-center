@@ -14,7 +14,8 @@
             <link rel="icon" type="image/png" href="{{ Storage::disk('public')->url($company->favicon_path) }}">
         @endif
     </head>
-    <body class="min-h-full bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100" style="--brand: {{ $company->brand_color ?? '#F27327' }};">
+@inject('impersonation', 'App\Services\Impersonation\ImpersonationManager')
+<body class="min-h-full bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100" style="--brand: {{ $company->brand_color ?? '#F27327' }};">
         <div class="flex min-h-screen">
             <aside class="hidden w-72 flex-col border-r border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/60 lg:flex">
                 <div class="flex h-20 items-center gap-3 px-8">
@@ -49,6 +50,22 @@
 
             <div class="flex flex-1 flex-col">
                 <header class="border-b border-slate-200 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/40">
+                    @if ($impersonation->isImpersonating())
+                        @php($impersonatedCompany = $impersonation->impersonatedCompany())
+                        <div class="border-b border-amber-400/40 bg-amber-100 px-6 py-3 text-sm text-amber-800 dark:border-amber-500/40 dark:bg-amber-900/20 dark:text-amber-200">
+                            <div class="flex items-center justify-between gap-3">
+                                <span>
+                                    Você está operando como <strong>{{ $impersonatedCompany?->name ?? 'empresa' }}</strong>.
+                                </span>
+                                <form action="{{ route('adminroot.impersonation.leave') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/20 px-3 py-1.5 text-xs font-semibold text-amber-800 transition hover:bg-amber-500/30 dark:text-amber-200">
+                                        Voltar ao painel Root
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endif
                     <div class="flex h-20 items-center justify-between px-6">
                         <div class="flex flex-col">
                             <span class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Painel Admin</span>

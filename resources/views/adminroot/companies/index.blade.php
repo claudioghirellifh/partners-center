@@ -14,6 +14,12 @@
         </div>
     @endif
 
+    @if ($errors->has('impersonation'))
+        <div class="mb-6 rounded-lg border border-red-300/60 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-600/50 dark:bg-red-900/20 dark:text-red-200">
+            {{ $errors->first('impersonation') }}
+        </div>
+    @endif
+
     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white/80 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
         <table class="min-w-full text-left text-sm text-slate-700 dark:text-slate-300">
             <thead class="bg-slate-100/80 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-900/40 dark:text-slate-400">
@@ -52,12 +58,20 @@
                                 <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-300">Suspensa</span>
                             @endif
                         </td>
-                        <td class="px-4 py-3 text-right">
-                            <a href="{{ route('adminroot.companies.edit', $company) }}" class="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">Editar</a>
+                        <td class="px-4 py-3 text-right space-x-1">
+                            <form action="{{ route('adminroot.companies.impersonate', $company) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center gap-1 rounded-md border border-[#F27327]/60 bg-[#F27327]/10 px-3 py-1.5 text-xs font-semibold text-[#F27327] transition hover:bg-[#F27327]/20 hover:text-white"
+                                    {{ $company->is_active ? '' : 'disabled' }}>
+                                    Entrar como
+                                </button>
+                            </form>
+
+                            <a href="{{ route('adminroot.companies.edit', $company) }}" class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">Editar</a>
                             <form action="{{ route('adminroot.companies.destroy', $company) }}" method="POST" class="inline" onsubmit="return confirm('Remover empresa? Esta ação não pode ser desfeita.');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="ml-2 rounded-md border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-600/70 dark:text-red-300 dark:hover:bg-red-900/20">Excluir</button>
+                                <button type="submit" class="inline-flex items-center gap-1 rounded-md border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-600/70 dark:text-red-300 dark:hover:bg-red-900/20">Excluir</button>
                             </form>
                         </td>
                     </tr>
