@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CustomerUpdateRequest extends FormRequest
 {
@@ -26,6 +27,8 @@ class CustomerUpdateRequest extends FormRequest
             'state' => ['required', 'string', 'size:2'],
             'district' => ['nullable', 'string', 'max:100'],
             'complement' => ['nullable', 'string', 'max:100'],
+            'iugu_mode' => ['required', Rule::in(['create', 'existing'])],
+            'iugu_customer_id' => ['nullable', 'string', 'max:100', 'required_if:iugu_mode,existing'],
         ];
     }
 
@@ -36,6 +39,8 @@ class CustomerUpdateRequest extends FormRequest
             'cpf_cnpj' => $this->onlyDigits($this->input('cpf_cnpj')),
             'zip_code' => $this->onlyDigits($this->input('zip_code')),
             'state' => strtoupper((string) $this->input('state')),
+            'iugu_mode' => $this->input('iugu_mode', 'existing'),
+            'iugu_customer_id' => $this->sanitizeId($this->input('iugu_customer_id')),
         ]);
     }
 
@@ -48,5 +53,16 @@ class CustomerUpdateRequest extends FormRequest
         $digits = preg_replace('/\D+/', '', $value);
 
         return $digits === '' ? null : $digits;
+    }
+
+    private function sanitizeId(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $trimmed = trim($value);
+
+        return $trimmed === '' ? null : $trimmed;
     }
 }

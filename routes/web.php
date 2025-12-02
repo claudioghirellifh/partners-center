@@ -78,6 +78,8 @@ Route::prefix('{company:uri}')
                     Route::resource('customers', \App\Http\Controllers\Admin\CustomerController::class)
                         ->except(['show'])
                         ->parameters(['customers' => 'customer']);
+                    Route::get('customers/{customer}/invoices', [\App\Http\Controllers\Admin\CustomerController::class, 'invoices'])
+                        ->name('customers.invoices');
                 });
             });
     });

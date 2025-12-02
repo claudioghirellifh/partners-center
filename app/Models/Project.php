@@ -17,6 +17,8 @@ class Project extends Model
         'name',
         'client_email',
         'billing_cycle',
+        'billing_origin',
+        'iugu_subscription_id',
         'charge_setup',
         'setup_fee',
         'starts_on',
@@ -31,6 +33,8 @@ class Project extends Model
 
     public const BILLING_MONTHLY = 'monthly';
     public const BILLING_ANNUAL = 'annual';
+    public const ORIGIN_MANUAL = 'manual';
+    public const ORIGIN_IUGU = 'iugu';
 
     public function company(): BelongsTo
     {

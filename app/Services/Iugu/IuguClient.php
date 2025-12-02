@@ -35,6 +35,33 @@ class IuguClient
         return $this->handleResponse($response);
     }
 
+    public function createCustomer(array $payload): array
+    {
+        $url = $this->apiBase.'/customers';
+        $response = Http::withBasicAuth($this->token, '')->post($url, $payload);
+        $this->logRequest('POST', $url, $payload, $response);
+
+        return $this->handleResponse($response);
+    }
+
+    public function listInvoices(array $query = []): array
+    {
+        $url = $this->apiBase.'/invoices';
+        $response = Http::withBasicAuth($this->token, '')->get($url, $query);
+        $this->logRequest('GET', $url, $query, $response);
+
+        return $this->handleResponse($response);
+    }
+
+    public function createSubscription(array $payload): array
+    {
+        $url = $this->apiBase.'/subscriptions';
+        $response = Http::withBasicAuth($this->token, '')->post($url, $payload);
+        $this->logRequest('POST', $url, $payload, $response);
+
+        return $this->handleResponse($response);
+    }
+
     public function updatePlan(string $identifier, array $payload): array
     {
         $url = $this->apiBase.'/plans/'.$identifier;

@@ -7,8 +7,10 @@ use App\Http\Requests\Admin\CustomerStoreRequest;
 use App\Http\Requests\Admin\CustomerUpdateRequest;
 use App\Models\Company;
 use App\Models\Customer;
+use App\Services\Iugu\IuguClient;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use RuntimeException;
 
 class CustomerController extends Controller
 {
@@ -35,7 +37,27 @@ class CustomerController extends Controller
     {
         $company = request()->attributes->get('company');
 
-        $company->customers()->create($request->validated());
+        $data = $request->validated();
+        $iuguMode = $data['iugu_mode'] ?? 'create';
+        unset($data['iugu_mode']);
+
+        if ($iuguMode === 'create') {
+            $iuguClient = $this->resolveIuguClient();
+            if (! $iuguClient) {
+                return redirect()->back()->withInput()
+                    ->withErrors(['iugu' => 'Configure um token da Iugu antes de criar clientes automaticamente.']);
+            }
+
+            try {
+                $response = $iuguClient->createCustomer($this->makeIuguCustomerPayload($data));
+                $data['iugu_customer_id'] = $response['id'] ?? null;
+            } catch (\Throwable $exception) {
+                return redirect()->back()->withInput()
+                    ->withErrors(['iugu' => 'Falha ao criar cliente na Iugu: '.$exception->getMessage()]);
+            }
+        }
+
+        $company->customers()->create($data);
 
         return redirect()
             ->route('admin.customers.index', ['company' => $company])
@@ -49,11 +71,65 @@ class CustomerController extends Controller
         return view('admin.customers.edit', compact('company', 'customer'));
     }
 
+    public function invoices(Company $company, Customer $customer): RedirectResponse|View
+    {
+        $this->authorizeCustomer($company, $customer);
+
+        if (! $customer->iugu_customer_id) {
+            return redirect()
+                ->route('admin.customers.index', ['company' => $company])
+                ->withErrors(['customer' => 'Cadastre ou vincule o ID do cliente na Iugu para consultar faturas.']);
+        }
+
+        $iuguClient = $this->resolveIuguClient();
+        if (! $iuguClient) {
+            return redirect()
+                ->route('admin.customers.index', ['company' => $company])
+                ->withErrors(['customer' => 'Token da Iugu não foi configurado.']);
+        }
+
+        try {
+            $response = $iuguClient->listInvoices([
+                'customer_id' => $customer->iugu_customer_id,
+                'limit' => 20,
+                'sortBy' => 'created_at',
+                'order' => 'desc',
+            ]);
+            $invoices = $response['items'] ?? (is_array($response) ? $response : []);
+        } catch (\Throwable $exception) {
+            return redirect()
+                ->route('admin.customers.index', ['company' => $company])
+                ->withErrors(['customer' => 'Falha ao consultar faturas na Iugu: '.$exception->getMessage()]);
+        }
+
+        return view('admin.customers.invoices', compact('company', 'customer', 'invoices'));
+    }
+
     public function update(CustomerUpdateRequest $request, Company $company, Customer $customer): RedirectResponse
     {
         $this->authorizeCustomer($company, $customer);
 
-        $customer->update($request->validated());
+        $data = $request->validated();
+        $iuguMode = $data['iugu_mode'] ?? 'existing';
+        unset($data['iugu_mode']);
+
+        if ($iuguMode === 'create' && ! $customer->iugu_customer_id) {
+            $iuguClient = $this->resolveIuguClient();
+            if (! $iuguClient) {
+                return redirect()->back()->withInput()
+                    ->withErrors(['iugu' => 'Configure um token da Iugu antes de criar clientes automaticamente.']);
+            }
+
+            try {
+                $response = $iuguClient->createCustomer($this->makeIuguCustomerPayload($data));
+                $data['iugu_customer_id'] = $response['id'] ?? null;
+            } catch (\Throwable $exception) {
+                return redirect()->back()->withInput()
+                    ->withErrors(['iugu' => 'Falha ao criar cliente na Iugu: '.$exception->getMessage()]);
+            }
+        }
+
+        $customer->update($data);
 
         return redirect()
             ->route('admin.customers.index', ['company' => $company])
@@ -82,5 +158,51 @@ class CustomerController extends Controller
         if ((int) $customer->company_id !== (int) $company->id) {
             abort(403);
         }
+    }
+
+    protected function resolveIuguClient(): ?IuguClient
+    {
+        try {
+            return app(IuguClient::class);
+        } catch (RuntimeException $exception) {
+            return null;
+        }
+    }
+
+    protected function makeIuguCustomerPayload(array $data): array
+    {
+        [$phonePrefix, $phoneNumber] = $this->splitPhone($data['phone'] ?? null);
+
+        return array_filter([
+            'email' => $data['email'],
+            'name' => $data['name'],
+            'cpf_cnpj' => $data['cpf_cnpj'],
+            'zip_code' => $data['zip_code'],
+            'street' => $data['street'],
+            'number' => $data['number'],
+            'district' => $data['district'] ?? null,
+            'city' => $data['city'],
+            'state' => $data['state'],
+            'complement' => $data['complement'] ?? null,
+            'phone' => $phoneNumber,
+            'phone_prefix' => $phonePrefix,
+        ], static fn ($value) => $value !== null && $value !== '');
+    }
+
+    protected function splitPhone(?string $phone): array
+    {
+        if (! $phone) {
+            return [null, null];
+        }
+
+        $digits = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($digits) <= 2) {
+            return [$digits ?: null, null];
+        }
+
+        $prefix = substr($digits, 0, 2);
+        $number = substr($digits, 2);
+
+        return [$prefix, $number];
     }
 }

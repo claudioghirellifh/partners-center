@@ -3,6 +3,8 @@
     @method('PUT')
 @endif
 
+@php($iuguMode = old('iugu_mode', ($customer->iugu_customer_id ?? null) ? 'existing' : 'create'))
+
 <div class="grid gap-5 md:grid-cols-2">
     <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Nome completo</label>
@@ -23,6 +25,26 @@
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">CPF/CNPJ</label>
         <input type="text" name="cpf_cnpj" value="{{ old('cpf_cnpj', $customer->cpf_cnpj ?? '') }}" required data-mask="cpf-cnpj" class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
         @error('cpf_cnpj')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+    </div>
+
+    <div class="md:col-span-2 rounded-xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/40">
+        <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Integração com Iugu</p>
+        <div class="mt-3 flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <label class="inline-flex items-center gap-2">
+                <input type="radio" name="iugu_mode" value="create" class="h-4 w-4 text-[color:var(--brand)] focus:ring-[color:var(--brand)]/40" data-iugu-mode @checked($iuguMode === 'create')>
+                Criar automaticamente o cliente na Iugu
+            </label>
+            <label class="inline-flex items-center gap-2">
+                <input type="radio" name="iugu_mode" value="existing" class="h-4 w-4 text-[color:var(--brand)] focus:ring-[color:var(--brand)]/40" data-iugu-mode @checked($iuguMode === 'existing')>
+                Já cadastrei este cliente na Iugu e quero vincular
+            </label>
+        </div>
+        <div id="iugu-customer-id-field" class="mt-3 {{ $iuguMode === 'existing' ? '' : 'hidden' }}">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">ID do cliente na Iugu</label>
+            <input type="text" name="iugu_customer_id" value="{{ old('iugu_customer_id', $customer->iugu_customer_id ?? '') }}" class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white" placeholder="ex.: 123456789">
+            @error('iugu_customer_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+        </div>
+        @error('iugu')<p class="mt-2 text-xs text-red-500">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">CEP</label>
@@ -198,6 +220,22 @@
 
                 cepInput.addEventListener('blur', fetchCep);
             }
+
+            const toggleIuguField = () => {
+                const selected = document.querySelector('input[data-iugu-mode]:checked');
+                const field = document.getElementById('iugu-customer-id-field');
+                if (!selected || !field) {
+                    return;
+                }
+
+                const show = selected.value === 'existing';
+                field.classList.toggle('hidden', !show);
+            };
+
+            document.querySelectorAll('input[data-iugu-mode]').forEach((input) => {
+                input.addEventListener('change', toggleIuguField);
+            });
+            toggleIuguField();
         });
     </script>
 @endonce
