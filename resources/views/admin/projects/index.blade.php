@@ -21,8 +21,7 @@
                     <th class="px-4 py-3">Nome</th>
                     <th class="px-4 py-3">Plano</th>
                     <th class="px-4 py-3">Cliente</th>
-                    <th class="px-4 py-3">Ciclo</th>
-                    <th class="px-4 py-3">Início</th>
+                    <th class="px-4 py-3">Origem</th>
                     <th class="px-4 py-3 text-right">Ações</th>
                 </tr>
             </thead>
@@ -33,10 +32,7 @@
                         <td class="px-4 py-3">{{ $project->plan?->name ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $project->customer?->name ?? '—' }}</td>
                         <td class="px-4 py-3">
-                            {{ $project->billing_cycle === \App\Models\Project::BILLING_ANNUAL ? 'Anual' : 'Mensal' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $project->starts_on?->format('d/m/Y') ?? '—' }}
+                            {{ $project->billing_origin === \App\Models\Project::ORIGIN_IUGU ? 'Automático (Iugu)' : 'Manual' }}
                         </td>
                         <td class="px-4 py-3 text-right">
                             <a href="{{ route('admin.projects.edit', ['company' => $company, 'project' => $project]) }}" class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">Editar</a>

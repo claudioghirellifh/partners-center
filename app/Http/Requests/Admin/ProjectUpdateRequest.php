@@ -26,7 +26,6 @@ class ProjectUpdateRequest extends FormRequest
                 'required_if:billing_origin,'.Project::ORIGIN_IUGU,
                 Rule::exists('customers', 'id')->where(fn ($query) => $company ? $query->where('company_id', $company->id) : $query),
             ],
-            'billing_cycle' => ['required', Rule::in([Project::BILLING_MONTHLY, Project::BILLING_ANNUAL])],
             'billing_origin' => ['required', Rule::in([Project::ORIGIN_MANUAL, Project::ORIGIN_IUGU])],
             'iugu_subscription_mode' => ['nullable', Rule::in(['existing', 'create'])],
             'iugu_subscription_id' => ['nullable', 'string', 'max:120', Rule::requiredIf(function () {
@@ -35,21 +34,25 @@ class ProjectUpdateRequest extends FormRequest
             })],
             'charge_setup' => ['nullable', 'boolean'],
             'setup_fee' => ['nullable', 'numeric', 'min:0', 'required_if:charge_setup,1'],
-            'starts_on' => ['nullable', 'date'],
             'notes' => ['nullable', 'string'],
         ];
     }
 
     protected function prepareForValidation(): void
     {
-        $this->merge([
+        $payload = [
             'billing_origin' => $this->input('billing_origin', Project::ORIGIN_MANUAL),
             'iugu_subscription_mode' => $this->input('iugu_subscription_mode', 'existing'),
             'iugu_subscription_id' => $this->input('iugu_subscription_id') ?: null,
             'customer_id' => $this->input('customer_id') ?: null,
             'charge_setup' => $this->boolean('charge_setup'),
-            'setup_fee' => $this->normalizeMoney($this->input('setup_fee')),
-        ]);
+        ];
+
+        if ($this->has('setup_fee')) {
+            $payload['setup_fee'] = $this->normalizeMoney($this->input('setup_fee'));
+        }
+
+        $this->merge($payload);
     }
 
     private function normalizeMoney($value): ?float

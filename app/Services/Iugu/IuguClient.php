@@ -62,6 +62,24 @@ class IuguClient
         return $this->handleResponse($response);
     }
 
+    public function createInvoice(array $payload): array
+    {
+        $url = $this->apiBase.'/invoices';
+        $response = Http::withBasicAuth($this->token, '')->post($url, $payload);
+        $this->logRequest('POST', $url, $payload, $response);
+
+        return $this->handleResponse($response);
+    }
+
+    public function getInvoice(string $invoiceId): array
+    {
+        $url = $this->apiBase.'/invoices/'.$invoiceId;
+        $response = Http::withBasicAuth($this->token, '')->get($url);
+        $this->logRequest('GET', $url, [], $response);
+
+        return $this->handleResponse($response);
+    }
+
     public function updatePlan(string $identifier, array $payload): array
     {
         $url = $this->apiBase.'/plans/'.$identifier;

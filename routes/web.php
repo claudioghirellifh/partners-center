@@ -37,6 +37,11 @@ Route::prefix($adminRootPrefix)
             Route::get('/integrations', [IntegrationController::class, 'index'])->name('integrations.index');
             Route::post('/integrations/iugu', [IntegrationController::class, 'updateIugu'])->name('integrations.iugu.update');
 
+            Route::prefix('emails')->name('emails.')->group(function (): void {
+                Route::get('/', [\App\Http\Controllers\AdminRoot\EmailPreviewController::class, 'index'])->name('index');
+                Route::get('/{template}', [\App\Http\Controllers\AdminRoot\EmailPreviewController::class, 'show'])->name('show');
+            });
+
             Route::post('/companies/{company}/impersonate', [ImpersonationController::class, 'store'])
                 ->name('companies.impersonate');
             Route::post('/impersonation/leave', [ImpersonationController::class, 'destroy'])

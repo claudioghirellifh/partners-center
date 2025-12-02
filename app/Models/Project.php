@@ -16,23 +16,18 @@ class Project extends Model
         'customer_id',
         'name',
         'client_email',
-        'billing_cycle',
         'billing_origin',
         'iugu_subscription_id',
         'charge_setup',
         'setup_fee',
-        'starts_on',
         'notes',
     ];
 
     protected $casts = [
-        'starts_on' => 'date',
         'charge_setup' => 'boolean',
         'setup_fee' => 'float',
     ];
 
-    public const BILLING_MONTHLY = 'monthly';
-    public const BILLING_ANNUAL = 'annual';
     public const ORIGIN_MANUAL = 'manual';
     public const ORIGIN_IUGU = 'iugu';
 
