@@ -19,7 +19,6 @@ class ProjectStoreRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:150'],
-            'client_email' => ['required', 'string', 'email', 'max:150'],
             'plan_id' => ['required', 'integer', Rule::exists('plans', 'id')],
             'customer_id' => [
                 'nullable',
@@ -37,6 +36,7 @@ class ProjectStoreRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
+            'customer_id' => $this->input('customer_id') ?: null,
             'charge_setup' => $this->boolean('charge_setup'),
             'setup_fee' => $this->normalizeMoney($this->input('setup_fee')),
         ]);

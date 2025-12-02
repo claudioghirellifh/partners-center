@@ -39,7 +39,15 @@ class ProjectController extends Controller
     {
         $company = request()->attributes->get('company');
 
-        $company->projects()->create($request->validated());
+        $data = $request->validated();
+        if (!empty($data['customer_id'])) {
+            $customer = $company->customers()->find($data['customer_id']);
+            if ($customer) {
+                $data['client_email'] = $customer->email;
+            }
+        }
+
+        $company->projects()->create($data);
 
         return redirect()->route('admin.projects.index', ['company' => $company])
             ->with('status', 'Projeto criado com sucesso.');
@@ -59,7 +67,15 @@ class ProjectController extends Controller
     {
         $this->authorizeProject($company, $project);
 
-        $project->update($request->validated());
+        $data = $request->validated();
+        if (!empty($data['customer_id'])) {
+            $customer = $company->customers()->find($data['customer_id']);
+            if ($customer) {
+                $data['client_email'] = $customer->email;
+            }
+        }
+
+        $project->update($data);
 
         return redirect()->route('admin.projects.index', ['company' => $company])
             ->with('status', 'Projeto atualizado com sucesso.');

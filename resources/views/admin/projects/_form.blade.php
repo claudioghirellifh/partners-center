@@ -34,11 +34,6 @@
         @endif
         @error('customer_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
     </div>
-    <div>
-        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email do cliente</label>
-        <input type="email" name="client_email" value="{{ old('client_email', $project->client_email ?? '') }}" required class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
-        @error('client_email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-    </div>
     @php($setupEnabled = (bool) old('charge_setup', $project->charge_setup ?? false))
     <div class="md:col-span-2">
         <label class="flex items-center gap-3 text-sm font-medium text-slate-700 dark:text-slate-200">
