@@ -14,7 +14,7 @@
         <select name="plan_id" required class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
             <option value="" disabled {{ old('plan_id', $project->plan_id ?? '') ? '' : 'selected' }}>Selecione um plano</option>
             @foreach($plans as $plan)
-                <option value="{{ $plan->id }}" @selected(old('plan_id', $project->plan_id ?? '') == $plan->id)>{{ $plan->name }}</option>
+                <option value="{{ $plan->id }}" @selected(old('plan_id', $project->plan_id ?? '') == $plan->id)>{{ $plan->name }} - R$ {{ number_format($plan->monthly_price, 2, ',', '.') }}/mês</option>
             @endforeach
         </select>
         @error('plan_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
