@@ -5,7 +5,7 @@
 
 <div class="grid gap-5 md:grid-cols-2">
     <div>
-        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Nome do cliente/projeto</label>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Nome do projeto</label>
         <input type="text" name="name" value="{{ old('name', $project->name ?? '') }}" required class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
         @error('name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
     </div>
@@ -18,6 +18,21 @@
             @endforeach
         </select>
         @error('plan_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Cliente vinculado</label>
+        <select name="customer_id" class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
+            <option value="">Selecione um cliente</option>
+            @forelse($customers as $customer)
+                <option value="{{ $customer->id }}" @selected(old('customer_id', $project->customer_id ?? '') == $customer->id)>{{ $customer->name }} ({{ $customer->email }})</option>
+            @empty
+                <option value="" disabled>Nenhum cliente cadastrado</option>
+            @endforelse
+        </select>
+        @if($customers->isEmpty())
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Cadastre clientes antes de vinculá-los.</p>
+        @endif
+        @error('customer_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email do cliente</label>

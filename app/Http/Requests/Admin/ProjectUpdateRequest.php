@@ -15,10 +15,17 @@ class ProjectUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        $company = request()->attributes->get('company');
+
         return [
             'name' => ['required', 'string', 'max:150'],
             'client_email' => ['required', 'string', 'email', 'max:150'],
             'plan_id' => ['required', 'integer', Rule::exists('plans', 'id')],
+            'customer_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('customers', 'id')->where(fn ($query) => $company ? $query->where('company_id', $company->id) : $query),
+            ],
             'billing_cycle' => ['required', Rule::in([Project::BILLING_MONTHLY, Project::BILLING_ANNUAL])],
             'charge_setup' => ['nullable', 'boolean'],
             'setup_fee' => ['nullable', 'numeric', 'min:0', 'required_if:charge_setup,1'],

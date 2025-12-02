@@ -20,6 +20,7 @@
                 <tr>
                     <th class="px-4 py-3">Nome</th>
                     <th class="px-4 py-3">Plano</th>
+                    <th class="px-4 py-3">Cliente</th>
                     <th class="px-4 py-3">Ciclo</th>
                     <th class="px-4 py-3">Início</th>
                     <th class="px-4 py-3 text-right">Ações</th>
@@ -30,6 +31,7 @@
                     <tr class="border-t border-slate-200/80 dark:border-slate-800/80">
                         <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">{{ $project->name }}</td>
                         <td class="px-4 py-3">{{ $project->plan?->name ?? '—' }}</td>
+                        <td class="px-4 py-3">{{ $project->customer?->name ?? '—' }}</td>
                         <td class="px-4 py-3">
                             {{ $project->billing_cycle === \App\Models\Project::BILLING_ANNUAL ? 'Anual' : 'Mensal' }}
                         </td>
@@ -47,7 +49,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-10 text-center text-slate-500 dark:text-slate-400">Nenhum projeto cadastrado ainda.</td>
+                        <td colspan="6" class="px-4 py-10 text-center text-slate-500 dark:text-slate-400">Nenhum projeto cadastrado ainda.</td>
                     </tr>
                 @endforelse
             </tbody>

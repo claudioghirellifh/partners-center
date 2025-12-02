@@ -19,7 +19,7 @@ class ProjectController extends Controller
         $company = request()->attributes->get('company');
 
         $projects = $company->projects()
-            ->with('plan')
+            ->with(['plan', 'customer'])
             ->latest('id')
             ->paginate(12);
 
@@ -30,8 +30,9 @@ class ProjectController extends Controller
     {
         $company = request()->attributes->get('company');
         $plans = Plan::query()->orderBy('name')->get();
+        $customers = $company->customers()->orderBy('name')->get();
 
-        return view('admin.projects.create', compact('company', 'plans'));
+        return view('admin.projects.create', compact('company', 'plans', 'customers'));
     }
 
     public function store(ProjectStoreRequest $request): RedirectResponse
@@ -49,8 +50,9 @@ class ProjectController extends Controller
         $this->authorizeProject($company, $project);
 
         $plans = Plan::query()->orderBy('name')->get();
+        $customers = $company->customers()->orderBy('name')->get();
 
-        return view('admin.projects.edit', compact('company', 'project', 'plans'));
+        return view('admin.projects.edit', compact('company', 'project', 'plans', 'customers'));
     }
 
     public function update(ProjectUpdateRequest $request, \App\Models\Company $company, Project $project): RedirectResponse

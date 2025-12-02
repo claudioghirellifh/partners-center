@@ -74,6 +74,10 @@ Route::prefix('{company:uri}')
                     Route::resource('projects', CompanyProjectController::class)
                         ->except(['show'])
                         ->parameters(['projects' => 'project']);
+
+                    Route::resource('customers', \App\Http\Controllers\Admin\CustomerController::class)
+                        ->except(['show'])
+                        ->parameters(['customers' => 'customer']);
                 });
             });
     });

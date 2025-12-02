@@ -13,6 +13,7 @@ class Project extends Model
     protected $fillable = [
         'company_id',
         'plan_id',
+        'customer_id',
         'name',
         'client_email',
         'billing_cycle',
@@ -39,5 +40,10 @@ class Project extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 }
