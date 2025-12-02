@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CustomerStoreRequest;
 use App\Http\Requests\Admin\CustomerUpdateRequest;
+use App\Http\Requests\Admin\CustomerInvoiceStoreRequest;
+use App\Mail\IuguPaymentLinksMail;
 use App\Models\Company;
 use App\Models\Customer;
+use App\Models\Project;
 use App\Services\Iugu\IuguClient;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use RuntimeException;
 
@@ -103,6 +107,82 @@ class CustomerController extends Controller
         }
 
         return view('admin.customers.invoices', compact('company', 'customer', 'invoices'));
+    }
+
+    public function createCharge(Company $company, Customer $customer): RedirectResponse|View
+    {
+        $this->authorizeCustomer($company, $customer);
+
+        if (! $customer->iugu_customer_id) {
+            return redirect()
+                ->route('admin.customers.index', ['company' => $company])
+                ->withErrors(['customer' => 'Vincule o ID do cliente na Iugu antes de gerar cobranças avulsas.']);
+        }
+
+        return view('admin.customers.invoices.create', compact('company', 'customer'));
+    }
+
+    public function storeCharge(CustomerInvoiceStoreRequest $request, Company $company, Customer $customer): RedirectResponse
+    {
+        $this->authorizeCustomer($company, $customer);
+
+        if (! $customer->iugu_customer_id) {
+            return redirect()
+                ->route('admin.customers.index', ['company' => $company])
+                ->withErrors(['customer' => 'Vincule o ID do cliente na Iugu antes de gerar cobranças avulsas.']);
+        }
+
+        $isTest = $request->boolean('send_test');
+        if ($isTest) {
+            $adminEmail = $request->user()->email ?? null;
+            if (! $adminEmail) {
+                return back()->withInput()
+                    ->withErrors(['customer' => 'Não foi possível identificar o e-mail do usuário logado para o envio de teste.']);
+            }
+
+            $this->sendInvoiceEmail($customer, 'https://iugu.com/pay/preview', $request->input('email_message'), $adminEmail, $request->input('description', 'Cobrança avulsa'));
+
+            return back()->with('status', 'E-mail de teste enviado para '.$adminEmail.'.');
+        }
+
+        $client = $this->resolveIuguClient();
+        if (! $client) {
+            return redirect()
+                ->route('admin.customers.index', ['company' => $company])
+                ->withErrors(['customer' => 'Configure o token da Iugu antes de gerar cobranças avulsas.']);
+        }
+
+        $payload = [
+            'customer_id' => $customer->iugu_customer_id,
+            'email' => $customer->email,
+            'due_date' => $request->input('due_date') ?? now()->toDateString(),
+            'items' => [[
+                'description' => $request->input('description'),
+                'quantity' => 1,
+                'price_cents' => (int) round($request->input('amount') * 100),
+            ]],
+        ];
+
+        if ($request->filled('notes')) {
+            $payload['notes'] = $request->input('notes');
+        }
+
+        try {
+            $invoice = $client->createInvoice($payload);
+        } catch (\Throwable $exception) {
+            return back()->withInput()
+                ->withErrors(['customer' => 'Falha ao criar fatura na Iugu: '.$exception->getMessage()]);
+        }
+
+        $message = 'Fatura avulsa criada com sucesso.';
+        if (!empty($invoice['secure_url'])) {
+            $message .= ' Link: '.$invoice['secure_url'];
+            $this->sendInvoiceEmail($customer, $invoice['secure_url'], $request->input('email_message'));
+        }
+
+        return redirect()
+            ->route('admin.customers.index', ['company' => $company])
+            ->with('status', $message);
     }
 
     public function update(CustomerUpdateRequest $request, Company $company, Customer $customer): RedirectResponse
@@ -204,5 +284,34 @@ class CustomerController extends Controller
         $number = substr($digits, 2);
 
         return [$prefix, $number];
+    }
+
+    protected function sendInvoiceEmail(Customer $customer, string $link, ?string $message, ?string $recipient = null, ?string $title = null): void
+    {
+        $email = $recipient ?: $customer->email;
+        if (! $email) {
+            return;
+        }
+
+        try {
+            $project = new Project([
+                'name' => $title ?? 'Cobrança avulsa',
+                'client_email' => $email,
+            ]);
+            $project->setRelation('company', $customer->company);
+            $project->setRelation('customer', $customer);
+
+            Mail::to($email)->send(new IuguPaymentLinksMail(
+                $project,
+                [[
+                    'label' => $title ?? 'Cobrança avulsa',
+                    'url' => $link,
+                    'type' => 'charge',
+                    'message' => $message,
+                ]]
+            ));
+        } catch (\Throwable) {
+            // ignore
+        }
     }
 }

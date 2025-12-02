@@ -85,6 +85,10 @@ Route::prefix('{company:uri}')
                         ->parameters(['customers' => 'customer']);
                     Route::get('customers/{customer}/invoices', [\App\Http\Controllers\Admin\CustomerController::class, 'invoices'])
                         ->name('customers.invoices');
+                    Route::get('customers/{customer}/charges/create', [\App\Http\Controllers\Admin\CustomerController::class, 'createCharge'])
+                        ->name('customers.charges.create');
+                    Route::post('customers/{customer}/charges', [\App\Http\Controllers\Admin\CustomerController::class, 'storeCharge'])
+                        ->name('customers.charges.store');
                 });
             });
     });

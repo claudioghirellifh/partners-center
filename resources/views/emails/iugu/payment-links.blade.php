@@ -86,16 +86,23 @@
         </div>
         <div class="content">
             @foreach($links as $link)
-                @if(($link['type'] ?? 'subscription') === 'subscription')
-                    <div class="card">
-                        <span class="badge">Assinatura</span>
-                        <p style="margin: 16px 0 0;">Clique no botão abaixo para concluir o pagamento deste ciclo:</p>
-                        <a href="{{ $link['url'] }}" target="_blank" rel="noopener" class="btn-link">
-                            Abrir link de pagamento
-                        </a>
-                        <p style="margin-top: 12px; font-size: 13px; color: #64748b;">Se o botão não funcionar, copie e cole no navegador: <br> {{ $link['url'] }}</p>
-                    </div>
-                @endif
+                <div class="card">
+                    <span class="badge">
+                        {{ ($link['type'] ?? 'subscription') === 'charge' ? 'Cobrança avulsa' : 'Assinatura' }}
+                    </span>
+                    <p style="margin: 16px 0 0;">
+                        {{ ($link['type'] ?? 'subscription') === 'charge'
+                            ? ($link['label'] ?? 'Pagamento único disponível. Clique abaixo para concluir:')
+                            : 'Clique no botão abaixo para concluir o pagamento deste ciclo:' }}
+                    </p>
+                    @if(!empty($link['message']))
+                        <p style="margin: 12px 0 0; color: #475569;">{{ $link['message'] }}</p>
+                    @endif
+                    <a href="{{ $link['url'] }}" target="_blank" rel="noopener" class="btn-link">
+                        Abrir link de pagamento
+                    </a>
+                    <p style="margin-top: 12px; font-size: 13px; color: #64748b;">Se o botão não funcionar, copie e cole no navegador: <br> {{ $link['url'] }}</p>
+                </div>
             @endforeach
             <p style="margin-top: 24px; color: #475569;">Qualquer dúvida é só responder este e-mail — estamos por aqui para ajudar.</p>
         </div>

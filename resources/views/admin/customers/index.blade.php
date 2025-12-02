@@ -56,6 +56,7 @@
                         <td class="px-4 py-3 text-right">
                             <a href="{{ route('admin.customers.edit', ['company' => $company, 'customer' => $customer]) }}" class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">Editar</a>
                             <a href="{{ route('admin.customers.invoices', ['company' => $company, 'customer' => $customer]) }}" class="inline-flex items-center gap-1 rounded-md border border-blue-300 px-3 py-1.5 text-xs font-medium text-blue-700 transition hover:bg-blue-50 dark:border-blue-600/70 dark:text-blue-300 dark:hover:bg-blue-900/20">Faturas</a>
+                            <a href="{{ route('admin.customers.charges.create', ['company' => $company, 'customer' => $customer]) }}" class="inline-flex items-center gap-1 rounded-md border border-emerald-300 px-3 py-1.5 text-xs font-medium text-emerald-700 transition hover:bg-emerald-50 dark:border-emerald-600/70 dark:text-emerald-300 dark:hover:bg-emerald-900/20">Cobrança avulsa</a>
                             <form action="{{ route('admin.customers.destroy', ['company' => $company, 'customer' => $customer]) }}" method="POST" class="inline" onsubmit="return confirm('Remover cliente? Esta ação não pode ser desfeita.');">
                                 @csrf
                                 @method('DELETE')
