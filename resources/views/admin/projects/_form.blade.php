@@ -20,6 +20,24 @@
         @error('plan_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
     </div>
     <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email do cliente</label>
+        <input type="email" name="client_email" value="{{ old('client_email', $project->client_email ?? '') }}" required class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
+        @error('client_email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+    </div>
+    @php($setupEnabled = (bool) old('charge_setup', $project->charge_setup ?? false))
+    <div class="md:col-span-2">
+        <label class="flex items-center gap-3 text-sm font-medium text-slate-700 dark:text-slate-200">
+            <input type="checkbox" name="charge_setup" value="1" class="h-5 w-5 rounded border-slate-300 text-[color:var(--brand)] focus:ring-[color:var(--brand)]/40 dark:border-slate-600" data-setup-toggle data-setup-target="#setup-fee-field" {{ $setupEnabled ? 'checked' : '' }}>
+            Cobrar Setup
+        </label>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Selecione para adicionar uma cobrança pontual de implantação.</p>
+    </div>
+    <div id="setup-fee-field" class="md:col-span-2 {{ $setupEnabled ? '' : 'hidden' }}">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Valor do setup</label>
+        <input type="text" name="setup_fee" id="setup-fee-input" value="{{ old('setup_fee', isset($project) && $project->setup_fee !== null ? 'R$ ' . number_format($project->setup_fee, 2, ',', '.') : '') }}" class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white" data-money-input {{ $setupEnabled ? '' : 'disabled' }} placeholder="R$ 0,00">
+        @error('setup_fee')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+    </div>
+    <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Ciclo de cobrança</label>
         <select name="billing_cycle" required class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
             <option value="{{ \App\Models\Project::BILLING_MONTHLY }}" @selected(old('billing_cycle', $project->billing_cycle ?? '') === \App\Models\Project::BILLING_MONTHLY)>Mensal</option>
@@ -46,3 +64,61 @@
     </button>
     <a href="{{ route('admin.projects.index', ['company' => $company]) }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">Cancelar</a>
 </div>
+
+@once
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleSetupField = (checkbox) => {
+                const targetSelector = checkbox.getAttribute('data-setup-target');
+                if (!targetSelector) {
+                    return;
+                }
+
+                const target = document.querySelector(targetSelector);
+                if (!target) {
+                    return;
+                }
+
+                const moneyInput = target.querySelector('[data-money-input]');
+                const enabled = checkbox.checked;
+
+                target.classList.toggle('hidden', !enabled);
+
+                if (moneyInput) {
+                    moneyInput.disabled = !enabled;
+                }
+            };
+
+            document.querySelectorAll('[data-setup-toggle]').forEach((checkbox) => {
+                checkbox.addEventListener('change', () => toggleSetupField(checkbox));
+                toggleSetupField(checkbox);
+            });
+
+            const formatMoneyValue = (value) => {
+                const digits = value.replace(/\D/g, '');
+                if (!digits) {
+                    return '';
+                }
+
+                const number = parseInt(digits, 10) / 100;
+                return number.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                });
+            };
+
+            document.querySelectorAll('[data-money-input]').forEach((input) => {
+                const handleInput = () => {
+                    input.value = formatMoneyValue(input.value);
+                };
+
+                input.addEventListener('input', handleInput);
+                input.addEventListener('blur', handleInput);
+
+                if (input.value) {
+                    input.value = formatMoneyValue(input.value);
+                }
+            });
+        });
+    </script>
+@endonce

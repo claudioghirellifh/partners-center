@@ -14,13 +14,18 @@ class Project extends Model
         'company_id',
         'plan_id',
         'name',
+        'client_email',
         'billing_cycle',
+        'charge_setup',
+        'setup_fee',
         'starts_on',
         'notes',
     ];
 
     protected $casts = [
         'starts_on' => 'date',
+        'charge_setup' => 'boolean',
+        'setup_fee' => 'float',
     ];
 
     public const BILLING_MONTHLY = 'monthly';
