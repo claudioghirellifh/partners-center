@@ -8,7 +8,6 @@ use App\Http\Requests\Admin\PasswordResetRequest;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -27,19 +26,20 @@ class PasswordResetController extends Controller
         /** @var Company $company */
         $company = $request->attributes->get('company');
 
+        // Usa o broker padrão do Laravel para gerar o token,
+        // armazenar em password_reset_tokens e disparar o e-mail.
         $status = Password::sendResetLink(
             ['email' => $request->string('email')->toString()]
         );
 
-        // Privacidade: não revelar se o e-mail existe; mas podemos bloquear usuários não-admin na etapa de reset
+        // Privacidade: não revelar se o e-mail existe de fato.
         return back()->with('status', __($status));
     }
 
-    public function resetForm(string $token): View
+    public function resetForm(Company $company, string $token): View
     {
-        /** @var Company $company */
-        $company = request()->attributes->get('company');
         $email = request('email');
+
         return view('admin.auth.reset-password', compact('company', 'token', 'email'));
     }
 
@@ -48,23 +48,40 @@ class PasswordResetController extends Controller
         /** @var Company $company */
         $company = $request->attributes->get('company');
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user, string $password) use ($company) {
-                // Restringe a admins da empresa e ativos
-                if (! $user->is_active || $user->role !== User::ROLE_ADMIN || (int) $user->company_id !== (int) $company->id) {
-                    return;
-                }
+        $email = $request->string('email')->toString();
+        $plainToken = $request->string('reset_token')->toString();
+        $newPassword = $request->string('password')->toString();
 
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                    'remember_token' => Str::random(60),
-                ])->save();
-            }
-        );
+        // Localiza o usuário usando o broker padrão
+        $user = Password::getUser(['email' => $email]);
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('admin.login.form', ['company' => $company])->with('status', __($status))
-            : back()->withErrors(['email' => __($status)]);
+        if (! $user instanceof User) {
+            return back()->withErrors(['email' => __('passwords.user')]);
+        }
+
+        // Garante que é um admin ativo da empresa atual
+        if (! $user->is_active || $user->role !== User::ROLE_ADMIN || (int) $user->company_id !== (int) $company->id) {
+            return back()->withErrors(['email' => __('passwords.user')]);
+        }
+
+        $repository = Password::getRepository();
+
+        // Valida token (inclui expiração interna)
+        if (! $repository->exists($user, $plainToken)) {
+            return back()->withErrors(['email' => __('passwords.token')]);
+        }
+
+        // Atualiza senha usando o cast "hashed"
+        $user->forceFill([
+            'password' => $newPassword,
+            'remember_token' => Str::random(60),
+        ])->save();
+
+        // Limpa tokens desse usuário
+        $repository->delete($user);
+
+        return redirect()
+            ->route('admin.login.form', ['company' => $company])
+            ->with('status', __('passwords.reset'));
     }
 }

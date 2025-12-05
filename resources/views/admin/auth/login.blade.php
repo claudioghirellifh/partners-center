@@ -21,6 +21,12 @@
     <form method="POST" action="{{ route('admin.login', ['company' => $company]) }}" class="space-y-6 rounded-2xl border border-slate-200 bg-white/85 p-8 shadow-xl shadow-slate-200/60 backdrop-blur dark:border-slate-800 dark:bg-slate-900/50 dark:shadow-slate-950/40">
         @csrf
 
+        @if (session('status'))
+            <p class="mb-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">
+                {{ session('status') }}
+            </p>
+        @endif
+
         <div class="space-y-2">
             <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-200">E-mail</label>
             <input id="email" name="email" type="email" inputmode="email" autocomplete="username" placeholder="admin@empresa.com" value="{{ old('email') }}" required class="w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/40 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">

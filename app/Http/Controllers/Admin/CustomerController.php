@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CustomerStoreRequest;
 use App\Http\Requests\Admin\CustomerUpdateRequest;
 use App\Http\Requests\Admin\CustomerInvoiceStoreRequest;
-use App\Mail\IuguPaymentLinksMail;
+use App\Mail\IuguChargeMail;
 use App\Models\Company;
 use App\Models\Customer;
-use App\Models\Project;
 use App\Services\Iugu\IuguClient;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
@@ -134,7 +134,12 @@ class CustomerController extends Controller
 
         $isTest = $request->boolean('send_test');
         if ($isTest) {
-            $adminEmail = $request->user()->email ?? null;
+            // Resolve o usuário logado (admin da empresa ou root em impersonação)
+            $user = $request->user();
+            if (! $user) {
+                $user = Auth::guard('web')->user() ?? Auth::guard('root')->user();
+            }
+            $adminEmail = $user?->email ?? null;
             if (! $adminEmail) {
                 return back()->withInput()
                     ->withErrors(['customer' => 'Não foi possível identificar o e-mail do usuário logado para o envio de teste.']);
@@ -294,24 +299,18 @@ class CustomerController extends Controller
         }
 
         try {
-            $project = new Project([
-                'name' => $title ?? 'Cobrança avulsa',
-                'client_email' => $email,
-            ]);
-            $project->setRelation('company', $customer->company);
-            $project->setRelation('customer', $customer);
-
-            Mail::to($email)->send(new IuguPaymentLinksMail(
-                $project,
-                [[
-                    'label' => $title ?? 'Cobrança avulsa',
-                    'url' => $link,
-                    'type' => 'charge',
-                    'message' => $message,
-                ]]
+            Mail::to($email)->send(new IuguChargeMail(
+                $customer->setRelation('company', $customer->company),
+                $link,
+                $message
             ));
-        } catch (\Throwable) {
-            // ignore
+        } catch (\Throwable $exception) {
+            \Log::error('iugu_charge_mail_failed', [
+                'customer_id' => $customer->id,
+                'company_id' => $customer->company_id,
+                'recipient' => $email,
+                'error' => $exception->getMessage(),
+            ]);
         }
     }
 }

@@ -15,8 +15,12 @@
 
     <form method="POST" action="{{ route('admin.password.update', ['company' => $company]) }}" class="space-y-6 rounded-2xl border border-slate-200 bg-white/85 p-8 shadow-xl shadow-slate-200/60 backdrop-blur dark:border-slate-800 dark:bg-slate-900/50 dark:shadow-slate-950/40">
         @csrf
-        <input type="hidden" name="token" value="{{ $token }}">
-        <input type="hidden" name="email" value="{{ $email }}">
+        <input type="hidden" name="reset_token" value="{{ $token }}">
+        <input type="hidden" name="email" value="{{ old('email', $email) }}">
+
+        @error('email')
+            <p class="text-sm text-red-600">{{ $message }}</p>
+        @enderror
 
         <div class="space-y-2">
             <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Nova senha</label>
