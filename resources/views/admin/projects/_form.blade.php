@@ -1,13 +1,33 @@
 @csrf
+@php($project = $project ?? null)
 @if(isset($project))
     @method('PUT')
 @endif
+
+@php($hasLockedCredentials = isset($project) && !empty($project->store_admin_password))
+
+@php($hasLockedCredentials = isset($project) && !empty($project->store_admin_password))
+@php($hasLockedDomain = isset($project) && !empty($project->store_domain) && empty($project->use_temp_domain))
 
 <div class="grid gap-5 md:grid-cols-2">
     <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Nome do projeto</label>
         <input type="text" name="name" value="{{ old('name', $project->name ?? '') }}" required class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
         @error('name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Domínio da loja</label>
+        <input type="text" name="store_domain" id="store-domain-input" value="{{ old('store_domain', $project->store_domain ?? '') }}" placeholder="ex.: minha-loja.com" {{ $hasLockedDomain ? 'readonly' : '' }} class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white {{ $hasLockedDomain ? 'bg-slate-100 dark:bg-slate-800 cursor-not-allowed' : '' }}">
+        @error('store_domain')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+        <label class="mt-3 inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <input type="checkbox" name="use_temp_domain" id="use-temp-domain" value="1" class="h-4 w-4 text-[color:var(--brand)] focus:ring-[color:var(--brand)]/40" @checked(old('use_temp_domain', $project->use_temp_domain ?? false)) {{ $hasLockedDomain ? 'disabled' : '' }}>
+            Hospedar em um domínio temporário (gera subdomínio automático)
+        </label>
+        @error('use_temp_domain')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Selecione para usar um domínio temporário; o campo de domínio ficará bloqueado.</p>
+        @if($hasLockedDomain)
+            <p class="mt-2 text-xs text-amber-600 dark:text-amber-300">Domínio definido e bloqueado para edição.</p>
+        @endif
     </div>
     <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Plano associado</label>
@@ -33,6 +53,54 @@
             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Cadastre clientes antes de vinculá-los.</p>
         @endif
         @error('customer_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+    </div>
+    <div class="md:col-span-2 grid gap-5 md:grid-cols-2">
+        <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Nome da loja</label>
+            <input type="text" name="store_name" value="{{ old('store_name', $project->store_name ?? '') }}" required {{ $hasLockedCredentials ? 'readonly' : '' }} class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white {{ $hasLockedCredentials ? 'bg-slate-100 dark:bg-slate-800 cursor-not-allowed' : '' }}">
+            @error('store_name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Nome do administrador da loja</label>
+            <input type="text" name="store_admin_name" value="{{ old('store_admin_name', $project->store_admin_name ?? '') }}" required {{ $hasLockedCredentials ? 'readonly' : '' }} class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white {{ $hasLockedCredentials ? 'bg-slate-100 dark:bg-slate-800 cursor-not-allowed' : '' }}">
+            @error('store_admin_name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">E-mail do administrador da loja</label>
+            <input type="email" name="store_admin_email" value="{{ old('store_admin_email', $project->store_admin_email ?? '') }}" required {{ $hasLockedCredentials ? 'readonly' : '' }} class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white {{ $hasLockedCredentials ? 'bg-slate-100 dark:bg-slate-800 cursor-not-allowed' : '' }}">
+            @error('store_admin_email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+        </div>
+        @unless($hasLockedCredentials)
+            <div class="md:col-span-2 grid gap-5 md:grid-cols-2">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Senha do administrador</label>
+                        <button type="button" class="text-xs text-[color:var(--brand)] hover:underline" data-toggle-visibility="store_admin_password">Mostrar/ocultar</button>
+                    </div>
+                    <input type="password" name="store_admin_password" id="store_admin_password" data-password-input class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white" {{ isset($project) ? '' : 'required' }} placeholder="{{ isset($project) ? 'Deixe em branco para manter' : '' }}">
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Mínimo 8 caracteres, com maiúsculas, minúsculas, número e símbolo.</p>
+                    <div class="mt-2">
+                        <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800">
+                            <div id="password-strength-fill" class="h-1.5 w-0 rounded-full transition-all duration-200" style="background: linear-gradient(90deg,#ef4444,#f59e0b,#10b981);"></div>
+                        </div>
+                        <p id="password-strength-label" class="mt-1 text-xs text-slate-500 dark:text-slate-400">Digite para avaliar a força.</p>
+                    </div>
+                    @error('store_admin_password')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Confirmar senha</label>
+                        <button type="button" class="text-xs text-[color:var(--brand)] hover:underline" data-toggle-visibility="store_admin_password_confirmation">Mostrar/ocultar</button>
+                    </div>
+                    <input type="password" name="store_admin_password_confirmation" id="store_admin_password_confirmation" class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[color:var(--brand)] focus:ring-2 focus:ring-[color:var(--brand)]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white" {{ isset($project) ? '' : 'required' }}>
+                </div>
+            </div>
+        @endunless
+        @if($hasLockedCredentials)
+            <div class="md:col-span-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-400/40 dark:bg-amber-900/40 dark:text-amber-100">
+                As credenciais já foram definidas. Para manter a segurança, nome da loja, administrador e e-mail estão bloqueados e a senha não pode ser alterada por aqui.
+            </div>
+        @endif
     </div>
     @php($billingOrigin = old('billing_origin', $project->billing_origin ?? \App\Models\Project::ORIGIN_MANUAL))
     @php($iuguSubscriptionMode = old('iugu_subscription_mode', !empty($project->iugu_subscription_id) ? 'existing' : 'create'))
@@ -78,6 +146,19 @@
     @error('notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
 </div>
 
+@if(isset($project))
+    <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Status da instalação</label>
+        @php($statusValue = old('status', $project?->status ?? \App\Models\Project::STATUS_REQUESTED))
+        @php($badge = \App\Models\Project::statusBadge($statusValue))
+        <div class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $badge['class'] }}">
+            {{ $badge['label'] }}
+        </div>
+        <input type="hidden" name="status" value="{{ $statusValue }}">
+        @error('status')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+    </div>
+@endif
+
 <div class="flex items-center gap-3">
     <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-[color:var(--brand)] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90">
         {{ $submitLabel ?? 'Salvar projeto' }}
@@ -90,6 +171,13 @@
         document.addEventListener('DOMContentLoaded', function () {
             const originField = document.getElementById('iugu-origin-fields');
             const subscriptionIdField = document.getElementById('iugu-subscription-id-field');
+            const passwordInput = document.querySelector('[data-password-input]');
+            const strengthFill = document.getElementById('password-strength-fill');
+            const strengthLabel = document.getElementById('password-strength-label');
+            const tempDomainCheckbox = document.getElementById('use-temp-domain');
+            const storeDomainInput = document.getElementById('store-domain-input');
+            const visibilityToggles = document.querySelectorAll('[data-toggle-visibility]');
+            const projectNameInput = document.querySelector('input[name="name"]');
 
             const toggleSubscriptionMode = () => {
                 const selectedMode = document.querySelector('input[data-subscription-mode]:checked');
@@ -124,6 +212,90 @@
                 input.addEventListener('change', toggleSubscriptionMode);
             });
             toggleSubscriptionMode();
+
+            const evaluatePassword = (value) => {
+                let score = 0;
+                if (!value) {
+                    return { score: 0, label: 'Digite para avaliar a força.' };
+                }
+                if (value.length >= 8) score += 1;
+                if (value.length >= 12) score += 1;
+                if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score += 1;
+                if (/[0-9]/.test(value)) score += 1;
+                if (/[^A-Za-z0-9]/.test(value)) score += 1;
+
+                if (score >= 5) return { score: 100, label: 'Senha forte' };
+                if (score >= 3) return { score: 65, label: 'Senha média' };
+                return { score: 35, label: 'Senha fraca' };
+            };
+
+            const updateStrengthUI = (event) => {
+                if (!strengthFill || !strengthLabel) return;
+                const { score, label } = evaluatePassword(event.target.value);
+                strengthFill.style.width = `${score}%`;
+                strengthFill.style.opacity = score === 0 ? '0.2' : '1';
+                strengthLabel.textContent = label;
+                strengthLabel.classList.remove('text-red-500', 'text-amber-500', 'text-emerald-500');
+                if (score >= 80) {
+                    strengthLabel.classList.add('text-emerald-500');
+                } else if (score >= 50) {
+                    strengthLabel.classList.add('text-amber-500');
+                } else {
+                    strengthLabel.classList.add('text-red-500');
+                }
+            };
+
+            if (passwordInput) {
+                passwordInput.addEventListener('input', updateStrengthUI);
+                updateStrengthUI({ target: passwordInput });
+            }
+
+            const slugify = (text) => {
+                if (!text) return '';
+                return text
+                    .toString()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-zA-Z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '')
+                    .toLowerCase()
+                    .substring(0, 20);
+            };
+
+            const generateTempDomain = () => {
+                const nameSlug = slugify(projectNameInput ? projectNameInput.value : '');
+                const random = Math.random().toString(36).slice(2, 8);
+                return `${nameSlug ? nameSlug + '-' : ''}${random}.cazco.link`;
+            };
+
+            const toggleDomainInput = () => {
+                if (!tempDomainCheckbox || !storeDomainInput) return;
+                const useTemp = tempDomainCheckbox.checked;
+                storeDomainInput.readOnly = useTemp;
+                storeDomainInput.required = !useTemp;
+                storeDomainInput.classList.toggle('bg-slate-100', useTemp);
+                storeDomainInput.classList.toggle('dark:bg-slate-800', useTemp);
+                if (useTemp && !storeDomainInput.value) {
+                    storeDomainInput.value = generateTempDomain();
+                } else if (!useTemp && storeDomainInput.readOnly === false) {
+                    storeDomainInput.value = '';
+                }
+            };
+
+            if (tempDomainCheckbox) {
+                tempDomainCheckbox.addEventListener('change', toggleDomainInput);
+                toggleDomainInput();
+            }
+
+            if (visibilityToggles.length) {
+                visibilityToggles.forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        const targetId = btn.getAttribute('data-toggle-visibility');
+                        const target = document.getElementById(targetId);
+                        if (!target) return;
+                        target.type = target.type === 'password' ? 'text' : 'password';
+                    });
+                });
+            }
         });
     </script>
 @endonce

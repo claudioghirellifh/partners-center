@@ -21,6 +21,7 @@
                     <th class="px-4 py-3">Nome</th>
                     <th class="px-4 py-3">Plano</th>
                     <th class="px-4 py-3">Cliente</th>
+                    <th class="px-4 py-3">Status</th>
                     <th class="px-4 py-3">Origem</th>
                     <th class="px-4 py-3 text-right">Ações</th>
                 </tr>
@@ -31,6 +32,10 @@
                         <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">{{ $project->name }}</td>
                         <td class="px-4 py-3">{{ $project->plan?->name ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $project->customer?->name ?? '—' }}</td>
+                        <td class="px-4 py-3">
+                            @php($badge = \App\Models\Project::statusBadge($project->status))
+                            <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {{ $badge['class'] }}">{{ $badge['label'] }}</span>
+                        </td>
                         <td class="px-4 py-3">
                             {{ $project->billing_origin === \App\Models\Project::ORIGIN_IUGU ? 'Automático (Iugu)' : 'Manual' }}
                         </td>

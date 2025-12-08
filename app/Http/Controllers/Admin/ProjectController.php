@@ -12,6 +12,8 @@ use App\Models\Plan;
 use App\Models\Project;
 use App\Services\Iugu\IuguClient;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Illuminate\Validation\ValidationException;
@@ -52,6 +54,17 @@ class ProjectController extends Controller
         $plan = Plan::findOrFail($data['plan_id']);
         $customer = null;
         $paymentLinks = [];
+        if (!empty($data['store_admin_password'])) {
+            $data['store_admin_password'] = Hash::make($data['store_admin_password']);
+        }
+        if (empty($data['status'])) {
+            $data['status'] = Project::STATUS_REQUESTED;
+        }
+        if (!empty($data['store_domain']) && empty($data['use_temp_domain'])) {
+            $data['use_temp_domain'] = false;
+        } elseif (!empty($data['use_temp_domain']) && empty($data['store_domain'])) {
+            $data['store_domain'] = $this->generateTempDomain($data['name'] ?? '');
+        }
         if (!empty($data['customer_id'])) {
             $customer = $company->customers()->find($data['customer_id']);
             if ($customer) {
@@ -120,6 +133,29 @@ class ProjectController extends Controller
         $plan = Plan::findOrFail($data['plan_id']);
         $customer = null;
         $paymentLinks = [];
+        if (!empty($project->store_admin_password)) {
+            // Credenciais já definidas: não permitir alterações desses campos via edição
+            unset($data['store_admin_password']);
+            $data['store_name'] = $project->store_name;
+            $data['store_admin_name'] = $project->store_admin_name;
+            $data['store_admin_email'] = $project->store_admin_email;
+        } elseif (!empty($data['store_admin_password'])) {
+            $data['store_admin_password'] = Hash::make($data['store_admin_password']);
+        } else {
+            unset($data['store_admin_password']);
+        }
+        if (!empty($project->store_domain) && !$project->use_temp_domain) {
+            // Domínio definitivo já salvo: mantém e não deixa alterar via edição
+            $data['store_domain'] = $project->store_domain;
+            $data['use_temp_domain'] = $project->use_temp_domain;
+        } elseif (!empty($data['store_domain']) && empty($data['use_temp_domain'])) {
+            $data['use_temp_domain'] = false;
+        } elseif (!empty($data['use_temp_domain']) && empty($data['store_domain'])) {
+            $data['store_domain'] = $this->generateTempDomain($data['name'] ?? $project->name);
+        }
+        if (empty($data['status'])) {
+            $data['status'] = $project->status ?? Project::STATUS_REQUESTED;
+        }
         if (!empty($data['customer_id'])) {
             $customer = $company->customers()->find($data['customer_id']);
             if ($customer) {
@@ -338,5 +374,12 @@ class ProjectController extends Controller
         } catch (\Throwable) {
             // falha no envio não deve impedir o fluxo de criação
         }
+    }
+
+    protected function generateTempDomain(string $name = ''): string
+    {
+        $slug = Str::slug(Str::limit($name, 30, '')) ?: 'loja';
+        $random = Str::lower(Str::random(6));
+        return "{$slug}-{$random}.cazco.link";
     }
 }
