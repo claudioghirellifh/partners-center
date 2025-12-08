@@ -35,7 +35,6 @@
                     <th class="px-4 py-3">Nome</th>
                     <th class="px-4 py-3">Plan ID</th>
                     <th class="px-4 py-3">Preço mensal</th>
-                    <th class="px-4 py-3">Preço anual</th>
                     <th class="px-4 py-3 text-right">Ações</th>
                 </tr>
             </thead>
@@ -45,7 +44,6 @@
                         <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">{{ $plan->name }}</td>
                         <td class="px-4 py-3 text-xs text-slate-500 dark:text-slate-400">{{ $plan->plan_id ?? '—' }}</td>
                         <td class="px-4 py-3">R$ {{ number_format($plan->monthly_price, 2, ',', '.') }}</td>
-                        <td class="px-4 py-3">R$ {{ number_format($plan->annual_price, 2, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right">
                             <a href="{{ route('adminroot.plans.edit', $plan) }}" class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">Editar</a>
                             <form action="{{ route('adminroot.plans.destroy', $plan) }}" method="POST" class="inline" onsubmit="return confirm('Remover plano? Esta ação não pode ser desfeita.');">

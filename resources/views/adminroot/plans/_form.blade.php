@@ -20,11 +20,6 @@
         <input type="number" step="0.01" min="0" name="monthly_price" value="{{ old('monthly_price', $plan->monthly_price ?? '') }}" required class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#F27327] focus:ring-2 focus:ring-[#F27327]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
         @error('monthly_price')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
     </div>
-    <div>
-        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Preço anual (R$)</label>
-        <input type="number" step="0.01" min="0" name="annual_price" value="{{ old('annual_price', $plan->annual_price ?? '') }}" required class="mt-2 w-full rounded-lg border border-slate-300 bg-white/80 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#F27327] focus:ring-2 focus:ring-[#F27327]/30 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white">
-        @error('annual_price')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-    </div>
 </div>
 
 <div>

@@ -16,7 +16,6 @@ class PlanUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:120'],
             'monthly_price' => ['required', 'numeric', 'min:0'],
-            'annual_price' => ['required', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
         ];
     }
@@ -25,7 +24,6 @@ class PlanUpdateRequest extends FormRequest
     {
         $this->merge([
             'monthly_price' => $this->normalizePrice($this->input('monthly_price')),
-            'annual_price' => $this->normalizePrice($this->input('annual_price')),
         ]);
     }
 

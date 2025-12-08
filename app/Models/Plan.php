@@ -13,14 +13,12 @@ class Plan extends Model
     protected $fillable = [
         'name',
         'monthly_price',
-        'annual_price',
         'description',
         'plan_id',
     ];
 
     protected $casts = [
         'monthly_price' => 'float',
-        'annual_price' => 'float',
     ];
 
     public function projects(): HasMany

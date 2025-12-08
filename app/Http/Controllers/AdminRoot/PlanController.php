@@ -97,7 +97,6 @@ class PlanController extends Controller
                 [
                     'name' => $remotePlan['name'] ?? 'Plano sem nome',
                     'monthly_price' => $monthlyPrice,
-                    'annual_price' => $monthlyPrice * 12,
                     'description' => $this->buildDescriptionFromRemote($remotePlan),
                 ]
             );

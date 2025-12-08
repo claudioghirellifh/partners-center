@@ -11,7 +11,6 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->decimal('monthly_price', 10, 2);
-            $table->decimal('annual_price', 10, 2);
             $table->text('description')->nullable();
             $table->timestamps();
         });
