@@ -70,6 +70,15 @@
                         </li>
                         <li>
                             <a
+                                href="{{ route('adminroot.release-notes.index') }}"
+                                class="flex items-center gap-3 rounded-lg px-4 py-2 font-medium text-slate-600 transition hover:bg-slate-200/70 dark:text-slate-300 dark:hover:bg-slate-800/60 {{ request()->routeIs('adminroot.release-notes.*') ? 'bg-slate-200 text-slate-900 dark:bg-slate-800/80 dark:text-white' : '' }}"
+                            >
+                                <span class="inline-flex h-2 w-2 rounded-full {{ request()->routeIs('adminroot.release-notes.*') ? 'bg-[#F27327]' : 'bg-slate-400 dark:bg-slate-600' }}"></span>
+                                Versões & avisos
+                            </a>
+                        </li>
+                        <li>
+                            <a
                                 href="{{ route('adminroot.emails.index') }}"
                                 class="flex items-center gap-3 rounded-lg px-4 py-2 font-medium text-slate-600 transition hover:bg-slate-200/70 dark:text-slate-300 dark:hover:bg-slate-800/60 {{ request()->routeIs('adminroot.emails.*') ? 'bg-slate-200 text-slate-900 dark:bg-slate-800/80 dark:text-white' : '' }}"
                             >
