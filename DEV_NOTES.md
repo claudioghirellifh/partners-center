@@ -175,3 +175,16 @@
 ### Histórico
 - **001** — Bootstrap inicial e documentação.
 - **002** — Console Root (autenticação, comando artisan, layout dashboard).
+- **003** — Tema dark/light manual com Livewire e Tailwind v4.
+- **004** — CRUD de empresas + admin inicial.
+- **005** — Branding e assets com Vite.
+- **006** — Gestão de usuários no Root.
+- **007** — Autenticação admin por empresa (login/reset).
+- **008** — Tenancy por URI + ajustes de onboarding.
+- **009** — Gestão de admins por empresa.
+- **010** — Impersonation Root → Empresa.
+- **011** — Planos SaaS no Root.
+- **012** — Projetos/Clientes por empresa.
+- **013** — Integração Iugu (token).
+- **014** — Sincronização de planos com Iugu.
+- **015** — Versão/changelog no painel admin, modal clicável com notas/avisos, badge de não lido no navegador e CRUD de release notes no Root.
